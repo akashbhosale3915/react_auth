@@ -1,26 +1,25 @@
-import Login from './components/Login';
-import Signup from './components/Signup';
-import Dashboard from './pages/Dashboard';
-import { Navigate, Route, Routes } from 'react-router-dom';
-import Home from './pages/Home';
-import { useSelector } from 'react-redux';
-import { RootState } from './store/store';
-import Otp from './components/Otp';
+import Login from "./components/Login";
+import Signup from "./components/Signup";
+import Dashboard from "./pages/Dashboard";
+import { Navigate, Route, Routes } from "react-router-dom";
+import Home from "./pages/Home";
+import { useSelector } from "react-redux";
+import { RootState } from "./store/store";
+import Otp from "./components/Otp";
+import ForgotPassword from "./components/ForgotPassword";
 
 const App = () => {
   const isUserLoggedIn = useSelector(
     (state: RootState) => state.auth.isAuthenticated
   );
 
-  console.log(isUserLoggedIn, 'isUserLoggedIn');
-
   return (
     <Routes>
       <Route
-        path='/login'
+        path="/"
         element={
           isUserLoggedIn ? (
-            <Navigate to='/dashboard' />
+            <Navigate to="/dashboard" />
           ) : (
             <Home>
               <Login />
@@ -29,10 +28,34 @@ const App = () => {
         }
       />
       <Route
-        path='/signup'
+        path="/forgot-password"
         element={
           isUserLoggedIn ? (
-            <Navigate to='/dashboard' />
+            <Navigate to="/dashboard" />
+          ) : (
+            <Home>
+              <ForgotPassword />
+            </Home>
+          )
+        }
+      />
+      <Route
+        path="/login"
+        element={
+          isUserLoggedIn ? (
+            <Navigate to="/dashboard" />
+          ) : (
+            <Home>
+              <Login />
+            </Home>
+          )
+        }
+      />
+      <Route
+        path="/signup"
+        element={
+          isUserLoggedIn ? (
+            <Navigate to="/dashboard" />
           ) : (
             <Home>
               <Signup />
@@ -41,11 +64,17 @@ const App = () => {
         }
       />
       <Route
-        path='/dashboard'
-        element={isUserLoggedIn ? <Dashboard /> : <Navigate to='/login' />}
+        path="/dashboard"
+        element={
+          isUserLoggedIn ? (
+            <Dashboard />
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
       />
       <Route
-        path='/otp'
+        path="/otp"
         element={
           isUserLoggedIn ? (
             <Dashboard />
