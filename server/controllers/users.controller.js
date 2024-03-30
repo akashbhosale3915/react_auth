@@ -53,7 +53,12 @@ async function createUser(req, res) {
       type: "numeric",
     });
 
-    await sendEmail(email, otp);
+    await sendEmail(
+      email,
+      "DroidTech - Email Verification",
+      otp,
+      "register"
+    );
 
     const userOTP = new OTP({
       email,
@@ -282,7 +287,12 @@ async function resendOTP(req, res) {
     });
     userOTP.otp = newOtp;
     userOTP.expiresAt = Date.now() + 3600000; // 1 hour
-    await sendEmail(email, newOtp);
+    await sendEmail(
+      email,
+      "Reset Password",
+      newOtp,
+      "register"
+    );
     await userOTP.save();
     res.status(200).json({
       success: true,
@@ -350,7 +360,12 @@ async function resetPassword(req, res) {
       expiresAt: new Date(Date.now() + 60 * 60 * 1000),
     });
 
-    await sendEmail(email, otp);
+    await sendEmail(
+      email,
+      "Reset Password",
+      otp,
+      "reset-password"
+    );
     await resetOtp.save();
 
     res.status(200).json({
