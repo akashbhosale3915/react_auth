@@ -5,7 +5,10 @@ import mongoose from "mongoose";
 import { validate } from "../utils/validators.js";
 import lodash from "lodash";
 import cryptoRandomString from "crypto-random-string";
-import { sendEmail } from "../utils/sendMail.js";
+import {
+  dnsErrorCodes,
+  sendEmail,
+} from "../utils/sendMail.js";
 async function createUser(req, res) {
   const { username, password, email, phone } = req.body;
 
@@ -17,7 +20,9 @@ async function createUser(req, res) {
   });
 
   if (errors.length) {
-    return res.status(400).json({ errors });
+    return res
+      .status(400)
+      .json({ success: false, message: errors[0] });
   }
 
   try {
@@ -48,6 +53,8 @@ async function createUser(req, res) {
       type: "numeric",
     });
 
+    await sendEmail(email, otp);
+
     const userOTP = new OTP({
       email,
       otp,
@@ -56,16 +63,22 @@ async function createUser(req, res) {
 
     await userOTP.save();
 
-    await sendEmail(email, otp);
-
     res.status(200).json({
       success: true,
       message: "OTP sent successfully",
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Internal server error" });
+    if (dnsErrorCodes.includes(error.code)) {
+      return res.status(400).json({
+        success: false,
+        message: "Domain not found. Enter a valid email.",
+      });
+    }
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+
     console.log(error);
   }
 }
@@ -269,8 +282,8 @@ async function resendOTP(req, res) {
     });
     userOTP.otp = newOtp;
     userOTP.expiresAt = Date.now() + 3600000; // 1 hour
+    await sendEmail(email, newOtp);
     await userOTP.save();
-    sendEmail(email, newOtp);
     res.status(200).json({
       success: true,
       message: "OTP sent successfully",
@@ -337,8 +350,8 @@ async function resetPassword(req, res) {
       expiresAt: new Date(Date.now() + 60 * 60 * 1000),
     });
 
-    await resetOtp.save();
     await sendEmail(email, otp);
+    await resetOtp.save();
 
     res.status(200).json({
       success: true,
