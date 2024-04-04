@@ -5,7 +5,6 @@ import connectDB from './db/connect.js';
 import { config as dotenv } from 'dotenv';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import path from 'path';
 
 const app = express();
 dotenv();
@@ -14,7 +13,6 @@ app.use(express.json());
 app.use(cookieParser());
 const port = process.env.PORT || 5000;
 
-app.use(express.static(path.join('client', 'dist')));
 app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 
