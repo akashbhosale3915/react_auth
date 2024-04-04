@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8000', // Target backend API URL
+        target: 'https://react-auth-vlhs.onrender.com', // Target backend API URL
         changeOrigin: true, // Enable CORS
         rewrite: (path) => path.replace(/^\/api/, ''), // Remove the '/api' prefix
       },
