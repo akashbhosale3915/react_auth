@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon ./server/app.js",
-    "start": "node ./server/.js"
+    "start": "cd client && npm install && npm run build && cd .. && node ./server/app.js"
   },
   "keywords": [],
   "author": "",
