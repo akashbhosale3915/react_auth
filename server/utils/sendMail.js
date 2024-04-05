@@ -15,95 +15,137 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-function renderRegisterTemplate(email, otp) {
+function renderRegisterTemplate(otp) {
   return `<!DOCTYPE html>
   <html lang="en">
     <head>
       <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
       <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
       />
-      <title>Document</title>
+      <title>Attractive Email Template</title>
+      <style>
+        /* Make it more visually appealing with CSS styles */
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f4f4f4;
+          margin: 0;
+          padding: 0;
+        }
+  
+        .container {
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #fff;
+          border-radius: 10px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+  
+        h1 {
+          color: #333;
+          text-align: center;
+        }
+  
+        p {
+          color: #666;
+          line-height: 1.6;
+        }
+      </style>
     </head>
     <body>
-      <div>
-        <h1 style="color: orange">DroidTech</h1>
-        <p style="font-weight: bold">Hello ${email},</p>
-        <p>
-          Thank you for choosing
-          <span style="font-weight: bold">DroidTech</span>.
-          use this OTP to complete your signup and verify your
-          account on
-          <span style="font-weight: bold">DroidTech</span>
+      <div class="container">
+        <h1 style="color: #007bff; text-align: center">
+          Welcome to DroidTech!
+        </h1>
+        <p style="text-align: center">
+          Thank you for joining us. Please use the OTP below
+          to complete your registration:
         </p>
-        <p
+        <div
           style="
-            font-weight: bold;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: flex-start;
+            text-align: center;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 20px 0;
           "
         >
-          <span>OTP</span>
-          <span
-            style="
-              background: black;
-              color: white;
-              padding: 10px;
-              border-radius: 8px;
-              margin-top: 10px;
-            "
-            >${otp}</span
-          >
-        </p>
+          <strong>${otp}</strong>
+        </div>
       </div>
     </body>
   </html>
   `;
 }
 
-function resetPasswordTemplate(email, otp) {
+function resetPasswordTemplate(otp) {
   return `<!DOCTYPE html>
   <html lang="en">
     <head>
       <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
       <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
       />
-      <title>Document</title>
+      <title>Attractive Email Template</title>
+      <style>
+        /* Make it more visually appealing with CSS styles */
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f4f4f4;
+          margin: 0;
+          padding: 0;
+        }
+  
+        .container {
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #fff;
+          border-radius: 10px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+  
+        h1 {
+          color: #333;
+          text-align: center;
+        }
+  
+        p {
+          color: #666;
+          line-height: 1.6;
+        }
+      </style>
     </head>
     <body>
-      <div>
-        <h1 style="color: orange">DroidTech</h1>
-        <p style="font-weight: bold">Hello ${email},</p>
-        <p>Use this OTP to reset your password.</p>
-        <p
+      <div class="container">
+        <h1 style="color: #007bff; text-align: center">
+          Reset Password
+        </h1>
+        <p style="text-align: center">
+          Please use the OTP below to change your password
+        </p>
+        <div
           style="
-            font-weight: bold;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: flex-start;
+            text-align: center;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 20px 0;
           "
         >
-          <span>OTP</span>
-          <span
-            style="
-              background: black;
-              color: white;
-              padding: 10px;
-              border-radius: 8px;
-              margin-top: 10px;
-            "
-            >${otp}</span
-          >
-        </p>
+          <strong>${otp}</strong>
+        </div>
       </div>
     </body>
   </html>
+  
   `;
 }
 
@@ -133,8 +175,8 @@ async function sendEmail(toEmail, subject, otp, path) {
         subject,
         html:
           path === "register"
-            ? renderRegisterTemplate(toEmail, otp)
-            : resetPasswordTemplate(toEmail, otp),
+            ? renderRegisterTemplate(otp)
+            : resetPasswordTemplate(otp),
       });
       console.log("Email sent: " + info.response);
     }
