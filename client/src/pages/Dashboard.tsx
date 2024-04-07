@@ -111,7 +111,7 @@ const Dashboard = () => {
           </label>
         </div>
         <button
-          className="bg-red-400 text-white p-2 rounded-md border-none outline-none"
+          className="bg-red-400 text-white p-2 flex justify-center items-center rounded-md border-none outline-none"
           onClick={handleLogOut}
         >
           {loading ? <Spinner color="#FF0000" /> : "Logout"}
