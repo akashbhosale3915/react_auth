@@ -13,9 +13,10 @@ app.use(express.json());
 app.use(cookieParser());
 const port = process.env.PORT || 5000;
 
-app.use("/", (req, res) => {
+app.use("/health", (req, res) => {
   res.send("Auth Server Working...");
 });
+
 app.use("/api/auth", authRoutes);
 app.use("/api/users", usersRoutes);
 

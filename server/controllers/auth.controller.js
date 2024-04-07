@@ -46,6 +46,7 @@ async function login(req, res) {
       "email",
       "phone",
       "role",
+      "profilePic",
     ]);
     res.status(200).json({
       success: true,

@@ -9,6 +9,9 @@ import {
   dnsErrorCodes,
   sendEmail,
 } from "../utils/sendMail.js";
+import { cloudinaryConfig } from "../utils/cloudinaryConfig.js";
+import fs from "fs";
+
 async function createUser(req, res) {
   const { username, password, email, phone } = req.body;
 
@@ -431,6 +434,38 @@ async function verifyResetPassword(req, res) {
   });
 }
 
+async function uploadImage(req, res) {
+  const id = req.params.id;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res
+      .status(400)
+      .json({ error: "Invalid user ID format" });
+  }
+  try {
+    const fileUpload =
+      await cloudinaryConfig.uploader.upload(req.file.path);
+    console.log(fileUpload);
+
+    const user = await User.findById(id);
+    user.profilePic = fileUpload?.secure_url;
+    await user.save();
+
+    fs.unlinkSync(req.file.path);
+
+    res.status(200).json({
+      success: true,
+      message: "Profile picture uploaded successfully",
+      profilePic: fileUpload?.secure_url,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+    console.log(error);
+  }
+}
+
 export {
   createUser,
   deleteUser,
@@ -440,4 +475,5 @@ export {
   resendOTP,
   resetPassword,
   verifyResetPassword,
+  uploadImage,
 };
