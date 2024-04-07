@@ -443,7 +443,16 @@ async function uploadImage(req, res) {
   }
   try {
     const fileUpload =
-      await cloudinaryConfig.uploader.upload(req.file.path);
+      await cloudinaryConfig.uploader.upload(
+        req.file.path,
+        {
+          transformation: {
+            width: 200,
+            height: 200,
+            crop: "fill",
+          },
+        }
+      );
     const user = await User.findById(id);
     user.profilePic = fileUpload?.secure_url;
     await user.save();
