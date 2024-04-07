@@ -444,8 +444,6 @@ async function uploadImage(req, res) {
   try {
     const fileUpload =
       await cloudinaryConfig.uploader.upload(req.file.path);
-    console.log(fileUpload);
-
     const user = await User.findById(id);
     user.profilePic = fileUpload?.secure_url;
     await user.save();
