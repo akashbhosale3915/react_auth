@@ -4,7 +4,7 @@ const Home = ({
   children: React.ReactNode;
 }) => {
   return (
-    <div className="h-dvh flex items-center justify-center">
+    <div className="min-h-dvh flex items-center justify-center">
       {children}
     </div>
   );

@@ -77,7 +77,7 @@ const Dashboard = () => {
     }
   }
   return (
-    <div className="h-screen flex items-center justify-center">
+    <div className="min-h-dvh flex items-center justify-center">
       <div className="flex flex-col items-center gap-5">
         <h1 className="text-white">
           Hello {user?.username}
