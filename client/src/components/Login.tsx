@@ -13,9 +13,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  async function handleLogin(
-    event: React.FormEvent<HTMLFormElement>
-  ) {
+  async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
     const username = form.username.value;
@@ -37,13 +35,10 @@ const Login = () => {
     }
     try {
       setLoading(true);
-      const { data } = await axiosInstance.post(
-        "/auth/login",
-        {
-          username,
-          password,
-        }
-      );
+      const { data } = await axiosInstance.post("/auth/login", {
+        username,
+        password,
+      });
 
       if (data.success) {
         toast.success(data.message);
@@ -60,14 +55,8 @@ const Login = () => {
   }
 
   return (
-    <form
-      className="form-container"
-      method="post"
-      onSubmit={handleLogin}
-    >
-      <h1 className="text-center text-5xl font-bold mb-8">
-        Login
-      </h1>
+    <form className="form-container" method="post" onSubmit={handleLogin}>
+      <h1 className="text-center text-5xl font-bold mb-8">Login V2</h1>
       <input
         type="text"
         placeholder="Enter your username or email"
