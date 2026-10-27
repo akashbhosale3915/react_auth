@@ -6,12 +6,12 @@ import util from "util";
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
-  host: "smtp.gmail.com",
-  port: 465,
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT || 465),
+  secure: Number(process.env.SMTP_PORT || 465) === 465,
   auth: {
-    user: process.env.GMAIL_USER_ID,
-    pass: process.env.GMAIL_PASSWORD,
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
 });
 
@@ -170,7 +170,7 @@ async function sendEmail(toEmail, subject, otp, path) {
       throw new Error("Invalid domain");
     } else {
       const info = await transporter.sendMail({
-        from: process.env.GMAIL_USER_ID,
+        from: process.env.MAIL_FROM || process.env.SMTP_USER,
         to: toEmail,
         subject,
         html:

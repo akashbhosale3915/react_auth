@@ -6,8 +6,8 @@ import { config as dotenv } from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
-const app = express();
 dotenv();
+const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
@@ -20,7 +20,8 @@ app.use("/health", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", usersRoutes);
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-  connectDB();
+connectDB().then(() => {
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
 });

@@ -19,19 +19,16 @@ const router = Router();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    if (!fs.existsSync(path.resolve("server", "uploads"))) {
-      fs.mkdirSync(path.resolve("server", "uploads"));
+    if (!fs.existsSync(path.resolve("uploads"))) {
+      fs.mkdirSync(path.resolve("uploads"));
     }
 
-    cb(null, path.resolve("server", "uploads"));
+    cb(null, path.resolve("uploads"));
   },
   filename: function (req, file, cb) {
     cb(
       null,
-      file.fieldname +
-        "-" +
-        Date.now() +
-        path.extname(file.originalname)
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname),
     ); // Define the file name and extension
   },
 });
@@ -40,11 +37,7 @@ const upload = multer({ storage: storage });
 router.post("/new", createUser);
 router.delete("/:id", loginMiddleware, deleteUser);
 router.put("/:id", loginMiddleware, editUser);
-router.post(
-  "/:id/upload",
-  upload.single("profilePic"),
-  uploadImage
-);
+router.post("/:id/upload", upload.single("profilePic"), uploadImage);
 router.get("/", loginMiddleware, getUsers);
 router.post("/verify-otp", verifyOTP);
 router.post("/resend-otp", resendOTP);
