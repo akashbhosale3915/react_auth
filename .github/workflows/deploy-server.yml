@@ -16,12 +16,16 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd /home/${{ secrets.EC2_USERNAME }}/react_auth || exit
+            # 1. Load NVM and Node environment paths for SSH session
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-            # Fetch latest commits from remote and force-align local main
+            # 2. Navigate and sync repository
+            cd /home/${{ secrets.EC2_USERNAME }}/react_auth || exit
             git fetch origin main
             git reset --hard origin/main
 
+            # 3. Install dependencies and restart PM2
             cd server
             npm ci
             pm2 restart auth-service --update-env
