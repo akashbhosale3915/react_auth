@@ -1,11 +1,9 @@
-const Home = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+import { Outlet } from "react-router-dom";
+
+const Home = () => {
   return (
     <div className="min-h-dvh flex items-center justify-center">
-      {children}
+      {<Outlet />}
     </div>
   );
 };

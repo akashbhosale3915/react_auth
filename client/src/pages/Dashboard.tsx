@@ -1,9 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
-import {
-  logout,
-  updateUser,
-} from "../store/slices/authSlice";
+import { logout, updateUser } from "../store/slices/authSlice";
 import { axiosInstance } from "../axios/axios";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
@@ -13,15 +10,11 @@ import { FaUserCircle } from "react-icons/fa";
 import { IoMdCamera } from "react-icons/io";
 
 const Dashboard = () => {
-  const user = useSelector(
-    (state: RootState) => state.auth.user
-  );
+  const user = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [picLoading, setPicLoading] = useState(false);
-  async function handleProfilePic(
-    e: ChangeEvent<HTMLInputElement>
-  ) {
+  async function handleProfilePic(e: ChangeEvent<HTMLInputElement>) {
     if (!e.target.files) return;
     const file = e.target.files[0];
     const formData = new FormData();
@@ -36,18 +29,16 @@ const Dashboard = () => {
             headers: {
               "Content-Type": "multipart/form-data",
             },
-          }
+          },
         );
         dispatch(
           updateUser({
             ...user,
             profilePic: data.profilePic,
-          })
+          }),
         );
         setPicLoading(false);
-        toast.success(
-          "Profile picture updated successfully"
-        );
+        toast.success("Profile picture updated successfully");
       }
     } catch (error) {
       setPicLoading(false);
@@ -58,9 +49,7 @@ const Dashboard = () => {
   async function handleLogOut() {
     try {
       setLoading(true);
-      const { data } = await axiosInstance.get(
-        "/auth/logout"
-      );
+      const { data } = await axiosInstance.get("/auth/logout");
 
       if (data.success) {
         dispatch(logout());
@@ -79,9 +68,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-dvh flex items-center justify-center">
       <div className="flex flex-col items-center gap-5">
-        <h1 className="text-white">
-          Hello {user?.username}
-        </h1>
+        <h1 className="text-white">Hello {user?.username}</h1>
         <div className="size-24 rounded-full border-2 border-slate-800 border-dotted relative">
           <div className="size-full rounded-full overflow-hidden flex justify-center items-center">
             {picLoading ? (
