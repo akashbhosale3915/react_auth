@@ -16,17 +16,28 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # 1. Load NVM and Node environment paths for SSH session
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-            # 2. Navigate and sync repository
             cd /home/${{ secrets.EC2_USERNAME }}/react_auth || exit
+
+            # 1. Capture current commit SHA before pulling updates
+            OLD_COMMIT=$(git rev-parse HEAD)
+
+            # 2. Sync to latest main
             git fetch origin main
             git reset --hard origin/main
 
-            # 3. Install dependencies and restart PM2
             cd server
-            npm ci
+
+            # 3. Only run npm ci if package.json or package-lock.json changed
+            if git diff --name-only $OLD_COMMIT HEAD | grep -qE 'package.json|package-lock.json'; then
+              echo "Package files changed. Running npm ci..."
+              npm ci
+            else
+              echo "No dependency changes detected. Skipping npm ci!"
+            fi
+
+            # 4. Restart server
             pm2 restart auth-service --update-env
             pm2 save

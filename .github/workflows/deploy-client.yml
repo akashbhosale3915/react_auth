@@ -12,10 +12,12 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js with caching
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "npm"
+          cache-dependency-path: "client/package-lock.json"
 
       - name: Install dependencies and Build
         working-directory: ./client
@@ -29,9 +31,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          # Vite outputs to 'dist', not 'build'
           source: "client/dist/*"
-          # Copies to a temporary folder in the EC2 user's home directory
           target: "/home/${{ secrets.EC2_USERNAME }}/temp-dist"
           strip_components: 2
 
@@ -42,9 +42,6 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # Remove old frontend files from Nginx root
             sudo rm -rf /var/www/html/*
-            # Move new files from temp folder to Nginx root
             sudo cp -r /home/${{ secrets.EC2_USERNAME }}/temp-dist/* /var/www/html/
-            # Delete the temp folder
             rm -rf /home/${{ secrets.EC2_USERNAME }}/temp-dist
