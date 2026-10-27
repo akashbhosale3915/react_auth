@@ -14,7 +14,7 @@ app.use(cookieParser());
 const port = process.env.PORT || 5000;
 
 app.use("/health", (req, res) => {
-  res.send("Auth Server Working...!!!!!");
+  res.send("Auth Server Working Without any issues");
 });
 
 app.use("/api/auth", authRoutes);
