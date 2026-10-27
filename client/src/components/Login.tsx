@@ -56,7 +56,7 @@ const Login = () => {
 
   return (
     <form className="form-container" method="post" onSubmit={handleLogin}>
-      <h1 className="text-center text-5xl font-bold mb-8">Login V2</h1>
+      <h1 className="text-center text-5xl font-bold mb-8">Login</h1>
       <input
         type="text"
         placeholder="Enter your username or email"
