@@ -37,7 +37,12 @@ const upload = multer({ storage: storage });
 router.post("/new", createUser);
 router.delete("/:id", loginMiddleware, deleteUser);
 router.put("/:id", loginMiddleware, editUser);
-router.post("/:id/upload", upload.single("profilePic"), uploadImage);
+router.post(
+  "/:id/upload",
+  loginMiddleware,
+  upload.single("profilePic"),
+  uploadImage,
+);
 router.get("/", loginMiddleware, getUsers);
 router.post("/verify-otp", verifyOTP);
 router.post("/resend-otp", resendOTP);

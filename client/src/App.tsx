@@ -6,8 +6,18 @@ import Home from "./pages/Home";
 import Otp from "./components/Otp";
 import ForgotPassword from "./components/ForgotPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { checkAuth } from "./store/slices/authSlice";
+import { AppDispatch } from "./store/store";
 
 const App = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(checkAuth());
+  }, [dispatch]);
+
   return (
     <Routes>
       {/* Public routes */}

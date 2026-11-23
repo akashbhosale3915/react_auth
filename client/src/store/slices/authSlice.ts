@@ -1,12 +1,11 @@
 // authSlice.ts
-import {
-  createSlice,
-  PayloadAction,
-} from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { axiosInstance } from "../../axios/axios";
 
 export interface AuthState {
   isAuthenticated: boolean;
   user: User | null;
+  authChecked: boolean;
 }
 
 interface User {
@@ -17,11 +16,15 @@ interface User {
   profilePic: string;
 }
 
+export const checkAuth = createAsyncThunk("auth/checkAuth", async () => {
+  const { data } = await axiosInstance.get("/auth/me");
+  return data.user as User;
+});
+
 const initialState: AuthState = {
-  isAuthenticated:
-    localStorage.getItem("isAuthenticated") === "true" ||
-    false,
-  user: JSON.parse(localStorage.getItem("user") || "null"),
+  isAuthenticated: false,
+  user: null,
+  authChecked: false,
 };
 
 const authSlice = createSlice({
@@ -31,28 +34,34 @@ const authSlice = createSlice({
     login(state, action: PayloadAction<User>) {
       state.isAuthenticated = true;
       state.user = action.payload;
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem(
-        "user",
-        JSON.stringify(action.payload)
-      );
+      state.authChecked = true;
     },
     logout(state) {
       state.isAuthenticated = false;
       state.user = null;
-      localStorage.removeItem("isAuthenticated");
-      localStorage.removeItem("user");
+      state.authChecked = true;
     },
     updateUser(state, action: PayloadAction<User>) {
       state.user = action.payload;
-      localStorage.setItem(
-        "user",
-        JSON.stringify(action.payload)
-      );
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(checkAuth.pending, (state) => {
+        state.authChecked = false;
+      })
+      .addCase(checkAuth.fulfilled, (state, action) => {
+        state.isAuthenticated = true;
+        state.user = action.payload;
+        state.authChecked = true;
+      })
+      .addCase(checkAuth.rejected, (state) => {
+        state.isAuthenticated = false;
+        state.user = null;
+        state.authChecked = true;
+      });
   },
 });
 
-export const { login, logout, updateUser } =
-  authSlice.actions;
+export const { login, logout, updateUser } = authSlice.actions;
 export default authSlice.reducer;
