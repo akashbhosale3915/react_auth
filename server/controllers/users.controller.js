@@ -5,10 +5,7 @@ import mongoose from "mongoose";
 import { validate } from "../utils/validators.js";
 import lodash from "lodash";
 import cryptoRandomString from "crypto-random-string";
-import {
-  dnsErrorCodes,
-  sendEmail,
-} from "../utils/sendMail.js";
+import { dnsErrorCodes, sendEmail } from "../utils/sendMail.js";
 import { cloudinaryConfig } from "../utils/cloudinaryConfig.js";
 import fs from "fs";
 
@@ -23,9 +20,7 @@ async function createUser(req, res) {
   });
 
   if (errors.length) {
-    return res
-      .status(400)
-      .json({ success: false, message: errors[0] });
+    return res.status(400).json({ success: false, message: errors[0] });
   }
 
   try {
@@ -46,8 +41,7 @@ async function createUser(req, res) {
     if (otpExists) {
       return res.status(200).json({
         success: true,
-        message:
-          "OTP already sent. Please check your email.",
+        message: "OTP already sent. Please check your email.",
       });
     }
 
@@ -56,12 +50,7 @@ async function createUser(req, res) {
       type: "numeric",
     });
 
-    await sendEmail(
-      email,
-      "DroidTech - Email Verification",
-      otp,
-      "register"
-    );
+    await sendEmail(email, "DroidTech - Email Verification", otp, "register");
 
     const userOTP = new OTP({
       email,
@@ -94,9 +83,7 @@ async function deleteUser(req, res) {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res
-      .status(400)
-      .json({ error: "Invalid user ID format" });
+    return res.status(400).json({ error: "Invalid user ID format" });
   }
   try {
     const user = await User.findById(id);
@@ -106,7 +93,7 @@ async function deleteUser(req, res) {
         message: "User not found",
       });
     }
-    if (req.user._id !== user._id) {
+    if (req.user._id !== user._id.toString()) {
       return res.status(401).json({
         success: false,
         message: "You are not authorized to edit this user",
@@ -157,7 +144,7 @@ async function editUser(req, res) {
       });
     }
 
-    if (req.user._id !== user._id) {
+    if (req.user._id !== user._id.toString()) {
       return res.status(401).json({
         success: false,
         message: "You are not authorized to edit this user",
@@ -168,10 +155,7 @@ async function editUser(req, res) {
     user.email = email;
     user.phone = phone;
 
-    const isMatch = await bcrypt.compare(
-      password,
-      user.password
-    );
+    const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       // Hash the new password before saving
@@ -189,8 +173,7 @@ async function editUser(req, res) {
     if (error.code === 11000) {
       return res.status(409).json({
         success: false,
-        message:
-          "Username taken, please choose a different username.",
+        message: "Username taken, please choose a different username.",
       });
     }
     res.status(500).json({
@@ -221,15 +204,11 @@ async function verifyOTP(req, res) {
     });
 
     if (!userOTP) {
-      return res
-        .status(404)
-        .json({ success: false, message: "OTP not found" });
+      return res.status(404).json({ success: false, message: "OTP not found" });
     }
 
     if (userOTP.otp !== otp) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid OTP" });
+      return res.status(401).json({ success: false, message: "Invalid OTP" });
     }
 
     const expiresAt = new Date(userOTP.expiresAt);
@@ -243,10 +222,7 @@ async function verifyOTP(req, res) {
     }
     await OTP.findByIdAndDelete(userOTP._id);
 
-    const hashedPassword = await bcrypt.hash(
-      user.password,
-      10
-    );
+    const hashedPassword = await bcrypt.hash(user.password, 10);
 
     user.password = hashedPassword;
 
@@ -290,12 +266,7 @@ async function resendOTP(req, res) {
     });
     userOTP.otp = newOtp;
     userOTP.expiresAt = Date.now() + 3600000; // 1 hour
-    await sendEmail(
-      email,
-      "Reset Password",
-      newOtp,
-      "register"
-    );
+    await sendEmail(email, "Reset Password", newOtp, "register");
     await userOTP.save();
     res.status(200).json({
       success: true,
@@ -316,9 +287,7 @@ async function resetPassword(req, res) {
   const errors = validate({ email }, "forgot-password");
 
   if (errors.length) {
-    return res
-      .status(400)
-      .json({ success: false, message: errors[0] });
+    return res.status(400).json({ success: false, message: errors[0] });
   }
 
   try {
@@ -353,7 +322,7 @@ async function resetPassword(req, res) {
           otp,
           expiresAt: new Date(Date.now() + 60 * 60 * 1000),
         },
-        { new: true }
+        { new: true },
       );
     }
 
@@ -363,12 +332,7 @@ async function resetPassword(req, res) {
       expiresAt: new Date(Date.now() + 60 * 60 * 1000),
     });
 
-    await sendEmail(
-      email,
-      "Reset Password",
-      otp,
-      "reset-password"
-    );
+    await sendEmail(email, "Reset Password", otp, "reset-password");
     await resetOtp.save();
 
     res.status(200).json({
@@ -392,15 +356,11 @@ async function verifyResetPassword(req, res) {
   });
 
   if (!userOTP) {
-    return res
-      .status(404)
-      .json({ success: false, message: "OTP not found" });
+    return res.status(404).json({ success: false, message: "OTP not found" });
   }
 
   if (userOTP.otp !== otp) {
-    return res
-      .status(401)
-      .json({ success: false, message: "Invalid OTP" });
+    return res.status(401).json({ success: false, message: "Invalid OTP" });
   }
 
   const expiresAt = new Date(userOTP.expiresAt);
@@ -425,7 +385,7 @@ async function verifyResetPassword(req, res) {
     },
     {
       new: true,
-    }
+    },
   );
 
   res.status(200).json({
@@ -435,25 +395,47 @@ async function verifyResetPassword(req, res) {
 }
 
 async function uploadImage(req, res) {
-  const id = req.params.id;
+  const { id } = req.params;
+
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res
       .status(400)
-      .json({ error: "Invalid user ID format" });
+      .json({ success: false, message: "Invalid user ID format" });
   }
+
+  if (req.user._id !== id) {
+    if (req.file?.path && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    return res.status(403).json({
+      success: false,
+      message: "You are not authorized to update this user's profile picture",
+    });
+  }
+
+  if (!req.file) {
+    return res
+      .status(400)
+      .json({ success: false, message: "No image file provided" });
+  }
+
   try {
-    const fileUpload =
-      await cloudinaryConfig.uploader.upload(
-        req.file.path,
-        {
-          transformation: {
-            width: 200,
-            height: 200,
-            crop: "fill",
-          },
-        }
-      );
     const user = await User.findById(id);
+    if (!user) {
+      fs.unlinkSync(req.file.path);
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    const fileUpload = await cloudinaryConfig.uploader.upload(req.file.path, {
+      transformation: {
+        width: 200,
+        height: 200,
+        crop: "fill",
+      },
+    });
+
     user.profilePic = fileUpload?.secure_url;
     await user.save();
 
@@ -465,6 +447,9 @@ async function uploadImage(req, res) {
       profilePic: fileUpload?.secure_url,
     });
   } catch (error) {
+    if (req.file?.path && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
     res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -472,7 +457,6 @@ async function uploadImage(req, res) {
     console.log(error);
   }
 }
-
 export {
   createUser,
   deleteUser,
