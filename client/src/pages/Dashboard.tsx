@@ -22,6 +22,19 @@ const Dashboard = () => {
 
   const [activeTab, setActiveTab] = useState<TabType>("notes");
   const [picLoading, setPicLoading] = useState(false);
+  const updatedAt = user?.updatedAt ? new Date(user.updatedAt) : null;
+  const lastModified = updatedAt
+    ? `${updatedAt.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+      })} ${updatedAt.toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      })}`
+    : null;
 
   async function handleProfilePic(e: ChangeEvent<HTMLInputElement>) {
     if (!e.target.files?.[0] || !user) return;
@@ -99,14 +112,9 @@ const Dashboard = () => {
                 </span>
               </div>
               <p className="text-sm text-slate-500 mt-1">{user?.email}</p>
-              {user?.updatedAt && (
+              {lastModified && (
                 <p className="text-xs text-slate-400 mt-1">
-                  Last modified:{" "}
-                  {new Date(user.updatedAt).toLocaleDateString("en-GB", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "2-digit",
-                  })}
+                  Last modified: {lastModified}
                 </p>
               )}
             </div>
