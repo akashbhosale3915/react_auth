@@ -36,17 +36,17 @@ const Notes = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <form onSubmit={handleAddNote} className="flex gap-2">
+      <form onSubmit={handleAddNote} className="flex min-w-0 gap-2">
         <input
           type="text"
           value={noteInput}
           onChange={(e) => setNoteInput(e.target.value)}
           placeholder="Write a quick note..."
-          className="flex-1 border border-slate-300 rounded-md h-11 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#009577]"
+          className="min-w-0 flex-1 border border-slate-300 rounded-md h-11 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#009577]"
         />
         <button
           type="submit"
-          className="bg-[#009577] hover:bg-[#007d63] text-white px-4 rounded-md text-sm font-semibold flex items-center gap-1.5 transition"
+          className="shrink-0 whitespace-nowrap bg-[#009577] hover:bg-[#007d63] text-white px-3 sm:px-4 rounded-md text-sm font-semibold flex items-center gap-1.5 transition"
         >
           <FiPlus size={16} />
           Add
