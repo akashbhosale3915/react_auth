@@ -49,6 +49,7 @@ async function login(req, res) {
       "phone",
       "role",
       "profilePic",
+      "updatedAt",
     ]);
     res.status(200).json({
       success: true,

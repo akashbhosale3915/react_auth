@@ -6,6 +6,12 @@ function validate(
   const validationFields = [];
   if (path === "forgot-password") {
     validationFields.push({ field: "Email", value: email });
+  } else if (path === "edit-profile") {
+    validationFields.push({ field: "Username", value: username });
+    validationFields.push({ field: "Phone", value: phone });
+    if (password !== undefined) {
+      validationFields.push({ field: "Password", value: password });
+    }
   } else {
     validationFields.push({
       field: "Username",

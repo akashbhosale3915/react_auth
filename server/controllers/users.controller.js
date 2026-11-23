@@ -114,7 +114,7 @@ async function deleteUser(req, res) {
 }
 async function editUser(req, res) {
   const { id } = req.params;
-  const { username, password, email, phone } = req.body;
+  const { username, phone, currentPassword, newPassword } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({
@@ -126,13 +126,32 @@ async function editUser(req, res) {
   try {
     const errors = validate({
       username,
-      password,
-      email,
+      password: newPassword,
       phone,
-    });
+    }, "edit-profile");
 
     if (errors.length) {
-      return res.status(400).json({ errors });
+      return res.status(400).json({
+        success: false,
+        message: errors[0],
+      });
+    }
+
+    const passwordChangeRequested =
+      currentPassword !== undefined || newPassword !== undefined;
+
+    if (
+      passwordChangeRequested &&
+      (typeof currentPassword !== "string" ||
+        !currentPassword ||
+        typeof newPassword !== "string" ||
+        !newPassword)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Current password and new password are both required to change your password.",
+      });
     }
 
     const user = await User.findById(id);
@@ -152,14 +171,18 @@ async function editUser(req, res) {
     }
 
     user.username = username;
-    user.email = email;
     user.phone = phone;
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    if (passwordChangeRequested) {
+      const isMatch = await bcrypt.compare(currentPassword, user.password);
+      if (!isMatch) {
+        return res.status(401).json({
+          success: false,
+          message: "Current password is incorrect.",
+        });
+      }
 
-    if (!isMatch) {
-      // Hash the new password before saving
-      user.password = await bcrypt.hash(password, 10);
+      user.password = await bcrypt.hash(newPassword, 10);
     }
 
     await user.save();
@@ -167,7 +190,15 @@ async function editUser(req, res) {
     res.status(200).json({
       success: true,
       message: "User updated successfully",
-      ...user?._doc,
+      user: {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        profilePic: user.profilePic,
+        updatedAt: user.updatedAt,
+      },
     });
   } catch (error) {
     if (error.code === 11000) {
@@ -183,6 +214,7 @@ async function editUser(req, res) {
     console.log(error);
   }
 }
+
 async function getUsers(req, res) {
   try {
     const users = await User.find();
@@ -445,6 +477,7 @@ async function uploadImage(req, res) {
       success: true,
       message: "Profile picture uploaded successfully",
       profilePic: fileUpload?.secure_url,
+      updatedAt: user.updatedAt,
     });
   } catch (error) {
     if (req.file?.path && fs.existsSync(req.file.path)) {

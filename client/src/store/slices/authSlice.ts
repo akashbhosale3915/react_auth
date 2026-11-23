@@ -12,8 +12,10 @@ interface User {
   _id: string;
   username: string;
   email: string;
+  phone?: string;
   role: string;
   profilePic: string;
+  updatedAt?: string;
 }
 
 export const checkAuth = createAsyncThunk("auth/checkAuth", async () => {
