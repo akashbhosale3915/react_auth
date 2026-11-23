@@ -101,7 +101,12 @@ const Dashboard = () => {
               <p className="text-sm text-slate-500 mt-1">{user?.email}</p>
               {user?.updatedAt && (
                 <p className="text-xs text-slate-400 mt-1">
-                  Last modified: {new Date(user.updatedAt).toLocaleString()}
+                  Last modified:{" "}
+                  {new Date(user.updatedAt).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "2-digit",
+                  })}
                 </p>
               )}
             </div>

@@ -118,6 +118,7 @@ const Otp = () => {
         maxLength={6}
       />
       <button
+        type="button"
         className={`text-[#009577] my-3 cursor-pointer w-max ${
           resendDisabled &&
           "cursor-not-allowed text-[#cccccc]"
@@ -129,7 +130,10 @@ const Otp = () => {
           ? `OTP sent try again in ${remainingTime}s`
           : "Resend OTP"}
       </button>
-      <button className="w-full bg-[#009577] rounded-md h-14 text-white md:text-xl font-semibold">
+      <button
+        type="submit"
+        className="w-full bg-[#009577] rounded-md h-14 text-white md:text-xl font-semibold"
+      >
         {loading ? <Spinner /> : "Verify"}
       </button>
       <div className="absolute top-3 left-3 bg-slate-100 p-2 rounded-md cursor-pointer">
